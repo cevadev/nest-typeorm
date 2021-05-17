@@ -2,6 +2,9 @@ import { Module, HttpModule, HttpService } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import * as Joi from 'joi';
 
+//import pg client
+import { Client } from 'pg';
+
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UsersModule } from './users/users.module';
@@ -9,6 +12,25 @@ import { ProductsModule } from './products/products.module';
 import { DatabaseModule } from './database/database.module';
 import { enviroments } from './enviroments';
 import config from './config';
+
+//construimos la conexion programatica a al BD
+const client = new Client({
+  //opciones de conexion
+  user: 'root',
+  host: 'localhost',
+  database: 'mydb',
+  password: '123456',
+  port: 5432,
+});
+
+//nos conectamos
+client.connect();
+
+//corremos una query. El metodo es error first, primero el error si ocurre o la respuesta
+client.query('SELECT * FROM tasks', (err, res) => {
+  console.error(err);
+  console.info(res.rows);
+});
 
 @Module({
   imports: [
