@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { Client } from 'pg';
 
 import { User } from '../entities/user.entity';
 import { Order } from '../entities/order.entity';
@@ -12,6 +13,8 @@ export class UsersService {
   constructor(
     private productsService: ProductsService,
     private configService: ConfigService,
+    //inyectamos nuestro provider de conexion con postgresql
+    @Inject('POSTGRES_CONNECTION') private clientPostgres: Client,
   ) {}
 
   private counterId = 1;
@@ -75,5 +78,19 @@ export class UsersService {
       user,
       products: this.productsService.findAll(),
     };
+  }
+
+  //metodo de prueba de la conexion inyectada
+  //nos conectamos a la refrencia directa del cliente
+  getTasks() {
+    //el service debe enviarle algo al controller por lo que enviamos una promesa y que se puede manejar de manera asincrona
+    return new Promise((resolve, reject) => {
+      this.clientPostgres.query('SELECT * FROM tasks', (err, res) => {
+        if (err) {
+          reject(err);
+        }
+        resolve(res.rows);
+      });
+    });
   }
 }
