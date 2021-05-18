@@ -51,16 +51,16 @@ export class ProductsController {
     return this.productsService.findOne(productId);
   }
 
-  @Post()
+  /*  @Post()
   create(@Body() payload: CreateProductDto) {
     // return {
     //   message: 'accion de crear',
     //   payload,
     // };
     return this.productsService.create(payload);
-  }
+  } */
 
-  @Put(':id')
+  /*  @Put(':id')
   update(@Param('id') id: string, @Body() payload: UpdateProductDto) {
     return this.productsService.update(+id, payload);
   }
@@ -68,5 +68,5 @@ export class ProductsController {
   @Delete(':id')
   delete(@Param('id') id: string) {
     return this.productsService.remove(+id);
-  }
+  } */
 }

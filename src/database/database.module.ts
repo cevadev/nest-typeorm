@@ -36,6 +36,10 @@ const API_KEY_PROD = 'PROD1212121SA';
           username: user,
           password,
           database: dbName,
+          //sincronizamos nuestra entiedad con la base de datos, si no existe la tabla la crea
+          //en ambiente de produccion este atributo y autoLoadEntities sdebe ser false
+          synchronize: true,
+          autoLoadEntities: true,
         };
       },
     }),
