@@ -28,40 +28,40 @@ export class ProductsService {
     return this.productRepo.find();
   }
 
-  findOne(id: number) {
-    const product = this.productRepo.findOne(id);
+  //productRepo.findOne() retorna una promesa por lo que debemos usar async / await
+  //resolvemos la promesa antes que el product.controllers.ts la resuelva, ya necesitamos saber si el product existe
+  //con async y await resolvemos la promesa antes que el controller
+  async findOne(id: number) {
+    const product = await this.productRepo.findOne(id);
     if (!product) {
       throw new NotFoundException(`Product #${id} not found`);
     }
     return product;
   }
 
-  /* create(data: CreateProductDto) {
-    this.counterId = this.counterId + 1;
-    const newProduct = {
-      id: this.counterId,
-      ...data,
-    };
-    this.products.push(newProduct);
-    return newProduct;
-  } */
+  create(data: CreateProductDto) {
+    //1 forma de guardar un nuevo producto, pero muy larga
+    /*const newProduct = new Product();
+    newProduct.name = data.name;
+    newProduct.description = data.description;
+    newProduct.price = data.price;
+    newProduct.stock = data.stock;
+    newProduct.image = data.image; */
 
-  /*  update(id: number, changes: UpdateProductDto) {
-    const product = this.findOne(id);
-    const index = this.products.findIndex((item) => item.id === id);
-    this.products[index] = {
-      ...product,
-      ...changes,
-    };
-    return this.products[index];
-  } */
+    //2da forma. Nuestro repositorio productRepo creara una nueva instancia basado en los datos de dto
+    const newProduct = this.productRepo.create(data);
+    return this.productRepo.save(newProduct);
+  }
 
-  /*  remove(id: number) {
-    const index = this.products.findIndex((item) => item.id === id);
-    if (index === -1) {
-      throw new NotFoundException(`Product #${id} not found`);
-    }
-    this.products.splice(index, 1);
-    return true;
-  } */
+  async update(id: number, changes: UpdateProductDto) {
+    const product = await this.productRepo.findOne(id);
+    //actualizamos la info de product basado en los cambos que vienen del dto
+    this.productRepo.merge(product, changes);
+    //enviamos los cambios a la bd
+    return this.productRepo.save(product);
+  }
+
+  remove(id: number) {
+    return this.productRepo.delete(id);
+  }
 }
