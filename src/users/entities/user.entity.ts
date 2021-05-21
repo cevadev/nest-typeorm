@@ -37,7 +37,7 @@ export class User {
   updateAt: Date;
 
   //esperamos que resuleva una entidad de tipo Customer
-  //por cada Customer, la referencia donde este el usuario es customer.user
+  //por cada Customer, la referencia donde este el usuario es
   //nullable: true -> no todos los Usuarios van a tener un customer por lo que el campo customer puede ser nulo
   @OneToOne(() => Customer, (customer) => customer.user, { nullable: true })
   @JoinColumn()

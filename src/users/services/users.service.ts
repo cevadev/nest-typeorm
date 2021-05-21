@@ -7,6 +7,7 @@ import { Order } from '../entities/order.entity';
 import { CreateUserDto, UpdateUserDto } from '../dtos/user.dto';
 
 import { ProductsService } from './../../products/services/products.service';
+import { CustomersService } from './customers.service';
 
 //workign with TypeOrm
 import { InjectRepository } from '@nestjs/typeorm';
@@ -16,6 +17,7 @@ export class UsersService {
   constructor(
     private productsService: ProductsService,
     private configService: ConfigService,
+    private customeraService: CustomersService,
     //Injectamos el repositorio para las operaciones con el usuario
     @InjectRepository(User) private userRepo: Repository<User>,
 
@@ -37,7 +39,11 @@ export class UsersService {
     const apiKey = this.configService.get('API_KEY');
     const dbName = this.configService.get('DATABASE_NAME');
     console.log(apiKey, dbName);
-    return this.userRepo.find();
+    //resolvemos la relacion: cuando nos retorna los Users, resolvemos la relacion que existe dentro de user
+    return this.userRepo.find({
+      //Traemos los datos del customer
+      relations: ['customer'],
+    });
   }
 
   async findOne(id: number) {
@@ -48,8 +54,15 @@ export class UsersService {
     return user;
   }
 
-  create(data: CreateUserDto) {
+  async create(data: CreateUserDto) {
     const newUser = this.userRepo.create(data);
+    //preguntamos si dentro de data viene un customer
+    if (data.customerId) {
+      //obtenemos el customer
+      const customer = await this.customeraService.findOne(data.customerId);
+      //asignamos el customer al user que estamos creando
+      newUser.customer = customer;
+    }
     return this.userRepo.save(newUser);
   }
 
