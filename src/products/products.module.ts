@@ -8,6 +8,7 @@ import { Product } from './entities/product.entity';
 
 import { BrandsController } from './controllers/brands.controller';
 import { BrandsService } from './services/brands.service';
+import { Brand } from './entities/brand.entity';
 
 import { CategoriesController } from './controllers/categories.controller';
 import { CategoriesService } from './services/categories.service';
@@ -17,6 +18,7 @@ import { CategoriesService } from './services/categories.service';
     TypeOrmModule.forFeature([
       //definimos las entidades que administrara
       Product,
+      Brand,
     ]),
   ],
   controllers: [ProductsController, CategoriesController, BrandsController],
