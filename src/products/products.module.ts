@@ -17,7 +17,7 @@ import { Category } from './entities/category.entity';
 @Module({
   imports: [
     TypeOrmModule.forFeature([
-      //definimos las entidades que administrara
+      //definimos las entidades a inyectarse
       Product,
       Brand,
       Category,
@@ -25,6 +25,7 @@ import { Category } from './entities/category.entity';
   ],
   controllers: [ProductsController, CategoriesController, BrandsController],
   providers: [ProductsService, BrandsService, CategoriesService],
-  exports: [ProductsService],
+  //exportamos el TypeOrmModule para poder hacer uso de las entiedades en otros servicios.
+  exports: [ProductsService, TypeOrmModule],
 })
 export class ProductsModule {}
