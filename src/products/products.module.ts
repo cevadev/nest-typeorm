@@ -12,6 +12,7 @@ import { Brand } from './entities/brand.entity';
 
 import { CategoriesController } from './controllers/categories.controller';
 import { CategoriesService } from './services/categories.service';
+import { Category } from './entities/category.entity';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { CategoriesService } from './services/categories.service';
       //definimos las entidades que administrara
       Product,
       Brand,
+      Category,
     ]),
   ],
   controllers: [ProductsController, CategoriesController, BrandsController],
