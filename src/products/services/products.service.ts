@@ -83,6 +83,15 @@ export class ProductsService {
       const brand = await this.brandRepo.findOne(changes.brandId);
       product.brand = brand;
     }
+
+    //actualizamos las categorias del producto
+    if (changes.categoriesIds) {
+      const categories = await this.categoryRepo.findByIds(
+        changes.categoriesIds,
+      );
+      product.categories = categories;
+    }
+
     //actualizamos la info de product basado en los cambos que vienen del dto
     this.productRepo.merge(product, changes);
     //enviamos los cambios a la bd
@@ -91,5 +100,30 @@ export class ProductsService {
 
   remove(id: number) {
     return this.productRepo.delete(id);
+  }
+
+  async removeCategoryByProduct(productId: number, categoryId: number) {
+    const product = await this.productRepo.findOne(productId, {
+      //resolvemos la relacion product-categories para que exista el array product.categores y poder manipularlo
+      relations: ['categories'],
+    });
+    //retornamos un array (filter) de categories que no contenga a categoryId y se lo asignamos a product.categories
+    product.categories = product.categories.filter((item) => {
+      return item.id !== categoryId;
+    });
+    return this.productRepo.save(product);
+  }
+
+  async addCategoryToProduct(productId: number, categoryId: number) {
+    //obtenemos el product con su relacion con categories
+    const product = await this.productRepo.findOne(productId, {
+      relations: ['categories'],
+    });
+
+    //obtenemos la category con el categoryId
+    const category = await this.categoryRepo.findOne(categoryId);
+    //agregamos al array de categories en producto nuestra category recuperada.
+    product.categories.push(category);
+    return this.productRepo.save(product);
   }
 }

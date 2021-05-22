@@ -69,4 +69,21 @@ export class ProductsController {
   delete(@Param('id') id: number) {
     return this.productsService.remove(id);
   }
+
+  //eliminamos una categoria de un producto
+  @Delete(':id/category/:categoryId')
+  deleteCategory(
+    @Param('id', ParseIntPipe) id: number,
+    @Param('categoryId', ParseIntPipe) categoryId: number,
+  ) {
+    return this.productsService.removeCategoryByProduct(id, categoryId);
+  }
+
+  @Put(':id/category/:categoryId')
+  addCategoryToProduct(
+    @Param('id', ParseIntPipe) idProduct: number,
+    @Param('categoryId', ParseIntPipe) idCategory: number,
+  ) {
+    return this.productsService.addCategoryToProduct(idProduct, idCategory);
+  }
 }
