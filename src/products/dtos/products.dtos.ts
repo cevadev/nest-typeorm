@@ -5,6 +5,8 @@ import {
   IsNotEmpty,
   IsPositive,
   IsArray,
+  IsOptional,
+  Min,
 } from 'class-validator';
 import { PartialType, ApiProperty } from '@nestjs/swagger';
 
@@ -47,3 +49,15 @@ export class CreateProductDto {
 }
 
 export class UpdateProductDto extends PartialType(CreateProductDto) {}
+
+export class FilterProductDto {
+  @IsOptional()
+  @IsPositive()
+  @ApiProperty()
+  limit: number;
+
+  @IsOptional()
+  @Min(0)
+  @ApiProperty()
+  offset: number; //los elementos que se van a escapar. Si ingreso 5 de offset empiezo desde el 6 hasta 10
+}

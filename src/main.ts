@@ -5,10 +5,17 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
+  //Activamos la transformacion de forma implicita
   app.useGlobalPipes(
     new ValidationPipe({
       whitelist: true,
       forbidNonWhitelisted: true,
+      transformOptions: {
+        //habilitamos la conversion implicita para el caso de la paginacion donde en lugar de query params
+        //enviamos un DTO pero los parametro de limit y offset vienen como string
+        //esta propiedad hace que implicitamente se conviertan a numero
+        enableImplicitConversion: true,
+      },
     }),
   );
 

@@ -4,7 +4,11 @@ import { Repository } from 'typeorm';
 
 import { Product } from './../entities/product.entity';
 import { BrandsService } from './brands.service';
-import { CreateProductDto, UpdateProductDto } from './../dtos/products.dtos';
+import {
+  CreateProductDto,
+  UpdateProductDto,
+  FilterProductDto,
+} from './../dtos/products.dtos';
 
 import { Category } from '../entities/category.entity';
 import { Brand } from '../entities/brand.entity';
@@ -31,7 +35,21 @@ export class ProductsService {
     },
   ];
  */
-  findAll() {
+
+  //params es opcional
+  async findAll(params?: FilterProductDto) {
+    //si hay parametros, retornamos una busqueda de productos con sus marcas
+    if (params) {
+      //deconstruimos el DTO
+      const { limit, offset } = params;
+
+      return await this.productRepo.find({
+        relations: ['brand'],
+        //take and skip variables de Typeorm. Take -> cuantos datos se mostraran, skip -> offset
+        take: limit,
+        skip: offset,
+      });
+    }
     return this.productRepo.find({
       //le decimos que resuelva la relacion de Brands
       relations: ['brand'],
