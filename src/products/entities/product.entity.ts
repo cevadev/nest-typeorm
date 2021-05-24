@@ -7,12 +7,18 @@ import {
   ManyToOne,
   ManyToMany,
   JoinTable,
+  Index,
+  JoinColumn,
 } from 'typeorm';
 
 import { Brand } from './brand.entity';
 import { Category } from './category.entity';
 
-@Entity()
+@Entity({
+  //indicamos le nombre de la tabla en la BD
+  name: 'products',
+})
+@Index(['price', 'stock'])
 export class Product {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,6 +29,7 @@ export class Product {
   @Column({ type: 'text' })
   description: string;
 
+  @Index()
   @Column({ type: 'int' })
   price: number;
 
@@ -33,6 +40,8 @@ export class Product {
   image: string;
 
   @CreateDateColumn({
+    //le indicamos como se debe llamar el campo en la tabla products de la BD
+    name: 'create_at',
     //definimos el tipo de campo: timestamptz, de tipo timestamp que organiza la zona horaria, es decir
     //no importa donde este, la va a adaptar al pais
     type: 'timestamptz',
@@ -42,22 +51,26 @@ export class Product {
   createAt: Date;
 
   @UpdateDateColumn({
+    name: 'update_at',
     type: 'timestamptz',
     default: () => 'CURRENT_TIMESTAMP',
   })
   updateAt: Date;
 
   @ManyToOne(() => Brand, (brand) => brand.products)
+  @JoinColumn({
+    name: 'brand_id',
+  })
   brand: Brand;
 
   @ManyToMany(() => Category, (category) => category.products)
   @JoinTable({
-    name: 'products_categories',
+    name: 'products_categories', //nombre de la tabla ternaria que typeorm creara aplicando naming
     joinColumn: {
-      name: 'product_id',
+      name: 'product_id', //relacion con la entidad donde estas situado (estamos situado en la entity product)
     },
     inverseJoinColumn: {
-      name: 'category_id',
+      name: 'category_id', //relacion con la otra entidad.
     },
   })
   categories: Category[];

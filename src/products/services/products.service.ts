@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, Between, FindConditions } from 'typeorm';
 
 import { Product } from './../entities/product.entity';
 import { BrandsService } from './brands.service';
@@ -40,11 +40,23 @@ export class ProductsService {
   async findAll(params?: FilterProductDto) {
     //si hay parametros, retornamos una busqueda de productos con sus marcas
     if (params) {
+      //declaramos la clausla where tipada vacia para ir llenandola dinaminamente.
+      const where: FindConditions<Product> = {};
       //deconstruimos el DTO
       const { limit, offset } = params;
+      const { maxPrice, minPrice } = params;
+
+      if (minPrice && maxPrice) {
+        //podemos declrar una condicion fija
+        //where.price = 300
+
+        //declaramos el rango de precios a filtrar
+        where.price = Between(minPrice, maxPrice);
+      }
 
       return await this.productRepo.find({
         relations: ['brand'],
+        where,
         //take and skip variables de Typeorm. Take -> cuantos datos se mostraran, skip -> offset
         take: limit,
         skip: offset,
